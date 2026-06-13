@@ -32,10 +32,26 @@ export default function ContactoForm({
   const [empresa, setEmpresa] = useState(
     contactoAEditar && contactoAEditar.empresa ? contactoAEditar.empresa : "",
   );
-
+  // Para Si ya exite , al estado le asignamos la direccion y sino le asignamos ""
   const [correo, setCorreo] = useState(
     contactoAEditar && contactoAEditar.correo ? contactoAEditar.correo : "",
   );
+
+  const [direccion, setDireccion] = useState(
+    contactoAEditar && contactoAEditar.direccion
+      ? contactoAEditar.direccion
+      : "",
+  );
+
+  const [nota, setNota] = useState(
+    contactoAEditar && contactoAEditar.nota ? contactoAEditar.nota : "",
+  );
+
+  // Para ocultar o mostrar en el formulario o ocultar los campos ( Idea central = No mostrar campos vacios)
+  const [verEmpresa, setVerEmpresa] = useState(empresa.trim() !== "");
+  const [verCorreo, setVerCorreo] = useState(correo.trim() !== "");
+  const [verDireccion, setVerDireccion] = useState(direccion.trim() !== "");
+  const [verNota, setVerNota] = useState(nota.trim() !== "");
 
   // ➕ Función para añadir una nueva fila de teléfono a la pantalla
   const añadirFilaTelefono = () => {
@@ -124,6 +140,21 @@ export default function ContactoForm({
         return; // 🛑 Frenamos el guardado de inmediato si falla el formato
       }
     }
+    // ✉️ EXPRESIÓN REGULAR PARA CORREO ELECTRÓNICO ESTÁNDAR
+    const regexCorreoValido =
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const correoLimpio = correo.trim();
+
+    // 🎯 REGLA: Solo validamos si el usuario escribió algo en el campo
+    if (correoLimpio !== "") {
+      if (!regexCorreoValido.test(correoLimpio)) {
+        Alert.alert(
+          "Error de Formato",
+          "El correo electrónico ingresado no es válido.\n\nEjemplo correcto: usuario@dominio.com",
+        );
+        return; // 🛑 Frenamos el guardado de inmediato si el correo está mal escrito
+      }
+    }
 
     // Si pasa las reglas, disparamos el guardado hacia el Padre
     // Vamos a hacerlo por parte
@@ -137,6 +168,9 @@ export default function ContactoForm({
         numero: tel.numero.trim(),
       })),
       empresa: empresa.trim(), // EMPRESA_NUEVA_LINEA
+      correo: correo.trim(), // Añadimos el correo
+      direccion: direccion.trim(), // Añadimos la direccion
+      nota: nota.trim(), // Añadimos la nota, sin espacion vacios antes o despues de todo el texto.
     };
 
     // Mandamos al Padre el cpontactoListo
@@ -218,28 +252,155 @@ export default function ContactoForm({
           <Text style={styles.textoBtnAñadir}>➕ Añadir otro teléfono</Text>
         </TouchableOpacity>
 
-        {/* AÑADIR/EDITAR EMPRESA */}
-        <Text style={styles.seccionTitulo}>Empresa ( Opcional) </Text>
-        <View style={styles.contenedorInputAccion}>
-          <TextInput
-            style={styles.inputFlexible}
-            placeholder="Nombre de Empresa"
-            placeholderTextColor="#c1bfbf"
-            value={empresa}
-            onChangeText={setEmpresa} // Guarda cada letra que se va tipeando ( renderizado nuevo)}
-          />
+        {/* 🏢 EMPRESA */}
+        {!verEmpresa ? (
+          <TouchableOpacity
+            style={styles.btnAñadirSeccionExtra}
+            onPress={() => setVerEmpresa(true)}
+          >
+            <Text style={styles.textoBtnExtra}>➕ Añadir Empresa</Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.bloqueCampoAbierto}>
+            <Text style={styles.label}>Empresa (Opcional):</Text>
+            <View style={styles.contenedorInputAccion}>
+              <TextInput
+                style={styles.inputFlexible}
+                placeholder="Ej: Roca, Google..."
+                placeholderTextColor="#999"
+                value={empresa}
+                onChangeText={setEmpresa}
+              />
+              {/* 🎯 CONDICIÓN: Solo se muestra si el campo NO está vacío */}
+              {empresa.trim() !== "" && (
+                <TouchableOpacity
+                  style={styles.btnEliminarFila}
+                  onPress={() => {
+                    setEmpresa("");
+                    setVerEmpresa(false);
+                  }}
+                >
+                  <Text style={{ fontSize: 16 }}>🗑️</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        )}
 
-          {/* Botón para borrar esta fila específica */}
-          {/* MOSTRAMOS LA CESTA SOLO SI HAY TEXTO */}
-          {empresa.trim() !== "" && (
-            <TouchableOpacity
-              onPress={() => setEmpresa("")} // Vaciamos el estado, La Empresa para eliminarla y pasara vacio hacia guardado
-              style={styles.btnEliminarCampo}
-            >
-              <Text style={{ fontSize: 20 }}>🗑️</Text>
-            </TouchableOpacity>
-          )}
-        </View>
+        {/* ✉️ CORREO ELECTRÓNICO */}
+        {!verCorreo ? (
+          <TouchableOpacity
+            style={styles.btnAñadirSeccionExtra}
+            onPress={() => setVerCorreo(true)}
+          >
+            <Text style={styles.textoBtnExtra}>
+              ➕ Añadir Correo Electrónico
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.bloqueCampoAbierto}>
+            <Text style={styles.label}>Correo (Opcional):</Text>
+            <View style={styles.contenedorInputAccion}>
+              <TextInput
+                style={styles.inputFlexible}
+                placeholder="Ej: pepito@correo.com"
+                placeholderTextColor="#999"
+                value={correo}
+                onChangeText={setCorreo}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+              {/* 🎯 CONDICIÓN: Solo se muestra si el campo NO está vacío */}
+              {correo.trim() !== "" && (
+                <TouchableOpacity
+                  style={styles.btnEliminarFila}
+                  onPress={() => {
+                    setCorreo("");
+                    setVerCorreo(false);
+                  }}
+                >
+                  <Text style={{ fontSize: 16 }}>🗑️</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        )}
+
+        {/* 🏠 DIRECCIÓN */}
+        {!verDireccion ? (
+          <TouchableOpacity
+            style={styles.btnAñadirSeccionExtra}
+            onPress={() => setVerDireccion(true)}
+          >
+            <Text style={styles.textoBtnExtra}>➕ Añadir Dirección</Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.bloqueCampoAbierto}>
+            <Text style={styles.label}>Dirección (Opcional):</Text>
+            <View style={styles.contenedorInputAccion}>
+              <TextInput
+                style={[styles.inputFlexible, styles.inputMultiline]}
+                placeholder="Ej: Av. Atlántico, #10..."
+                placeholderTextColor="#999"
+                value={direccion}
+                onChangeText={setDireccion}
+                multiline={true}
+                numberOfLines={3}
+                textAlignVertical="top"
+              />
+              {/* 🎯 CONDICIÓN: Solo se muestra si el campo NO está vacío */}
+              {direccion.trim() !== "" && (
+                <TouchableOpacity
+                  style={styles.btnEliminarFila}
+                  onPress={() => {
+                    setDireccion("");
+                    setVerDireccion(false);
+                  }}
+                >
+                  <Text style={{ fontSize: 16 }}>🗑️</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        )}
+
+        {/* 📝 NOTA */}
+        {!verNota ? (
+          <TouchableOpacity
+            style={styles.btnAñadirSeccionExtra}
+            onPress={() => setVerNota(true)}
+          >
+            <Text style={styles.textoBtnExtra}>➕ Añadir Nota</Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.bloqueCampoAbierto}>
+            <Text style={styles.label}>Nota (Opcional):</Text>
+            <View style={styles.contenedorInputAccion}>
+              <TextInput
+                style={[styles.inputFlexible, styles.inputMultiline]}
+                placeholder="Si quieres, agrega un comentario..."
+                placeholderTextColor="#999"
+                value={nota}
+                onChangeText={setNota}
+                multiline={true}
+                numberOfLines={3}
+                textAlignVertical="top"
+              />
+              {/* 🎯 CONDICIÓN: Solo se muestra si el campo NO está vacío */}
+              {nota.trim() !== "" && (
+                <TouchableOpacity
+                  style={styles.btnEliminarFila}
+                  onPress={() => {
+                    setNota("");
+                    setVerNota(false);
+                  }}
+                >
+                  <Text style={{ fontSize: 16 }}>🗑️</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        )}
 
         {/* Botonera de guardar y cancelar */}
         <View style={styles.botonera}>
@@ -260,7 +421,6 @@ export default function ContactoForm({
             </TouchableOpacity>
           )}
         </View>
-        {/* </View> */}
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -300,8 +460,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     color: colores.textoMutado,
-    marginTop: 10,
-    marginBottom: 8,
+    marginTop: 5,
+    marginBottom: 0,
   },
   input: {
     borderWidth: 1,
@@ -310,19 +470,20 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     backgroundColor: "#F9FAFB",
-    marginBottom: 12,
-    fontSize: 15,
+    marginBottom: 1,
+    fontSize: 13,
   },
 
   inputFlexible: {
-    flex: 1,
-    height: 45,
-    backgroundColor: "#ffff",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    fontSize: 15,
     borderWidth: 1,
+    backgroundColor: "#ffff",
+    paddingHorizontal: 12,
+    // height: 45,
+    borderRadius: 8,
     borderColor: "#ccc",
+    marginBottom: 1,
+    fontSize: 13,
+    flex: 1,
   },
 
   filaInput: {
@@ -357,7 +518,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 6,
     backgroundColor: "#F3F4F6",
-    marginBottom: 15,
+    marginBottom: 5,
   },
   textoBtnAñadir: {
     fontSize: 13,
@@ -404,5 +565,29 @@ const styles = StyleSheet.create({
   },
   scrollFormulario: {
     paddingBottom: 40, // 🚀 TRUCO: Deja un colchón de espacio abajo para que el último campo (Empresa) suba cómodamente
+  },
+  inputMultiline: {
+    height: 80, // 🚀 Le damos más altura para que quepan holgadamente las líneas
+    paddingTop: 10, // Espacio interno arriba para que el texto no choque con el borde
+  },
+  btnAñadirSeccionExtra: {
+    backgroundColor: "#f8fafc", // Fondo grisáceo muy suave
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    borderStyle: "dashed", // 🚀 Efecto punteado clásico de "añadir elemento opcional"
+    alignItems: "flex-start",
+    marginVertical: 6,
+  },
+  textoBtnExtra: {
+    color: "#3b82f6", // Azul bonito institucional
+    fontWeight: "bold",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  bloqueCampoAbierto: {
+    marginVertical: 6,
   },
 });

@@ -1,9 +1,11 @@
-// Esta en realidad es la Version 01
-// src/components/ContactoCard.js
+// Este archivo ContactoCard_V02 es la copia de ContactoCard, antes de implementar las llamadas al numero.
+// src/components/ContactoCard_V02.js
 import React, { useState } from "react"; // ◄--- Importamos useState para el acordeón
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { colores } from "../styles/globalStyles";
 import { iniciarLlamada, abrirEnMaps } from "../utils/linkingHelper"; // Importamos los modulos para llamar y ubicacion en maps
+
+
 
 export default function ContactoCard({
   contacto,
@@ -35,13 +37,13 @@ export default function ContactoCard({
             onPress={() => editarContactoSeleccionado(contacto)} // Lo lanza para la funcion del padre editarConactoSeleccionado
             style={styles.btnAccion}
           >
-            <Text style={{ fontSize: 14 }}>✏️</Text>
+            <Text style={{ fontSize: 20 }}>✏️</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => eliminarContactoGlobal(contacto.id, contacto.nombre)}
             style={styles.btnAccion}
           >
-            <Text style={{ fontSize: 14 }}>❌</Text>
+            <Text style={{ fontSize: 20 }}>❌</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -104,6 +106,8 @@ export default function ContactoCard({
               </View>
             ))}
 
+            {/* ... (Aquí abajo siguen tus bloques de Empresa, Correo, Dirección y Nota) ... */}
+
             {/* 🏢 SECCIÓN: EMPRESA (Solo si existe y no está vacía) */}
             {contacto.empresa && contacto.empresa.trim() !== "" && (
               <View style={styles.filaDatoExtra}>
@@ -132,22 +136,7 @@ export default function ContactoCard({
                 <Text style={styles.iconoExtra}>🏠</Text>
                 <View style={styles.contenedorTextoLargo}>
                   <Text style={styles.labelExtra}>Dirección</Text>
-
-                  {/* 🎯 Convertimos solo el texto de la dirección en un enlace interactivo a Maps */}
-                  <TouchableOpacity
-                    onPress={(e) => {
-                      e.stopPropagation(); // 🛑 Evita que la tarjeta se colapse al abrir el mapa
-                      abrirEnMaps(contacto.direccion);
-                    }}
-                    activeOpacity={0.7}
-                  >
-                    {/* Combinamos tu estilo original con el nuevo estilo interactivo */}
-                    <Text
-                      style={[styles.textoExtra, styles.textoDireccionLink]}
-                    >
-                      📍 {contacto.direccion}
-                    </Text>
-                  </TouchableOpacity>
+                  <Text style={styles.textoExtra}>{contacto.direccion}</Text>
                 </View>
               </View>
             )}
@@ -278,23 +267,5 @@ const styles = StyleSheet.create({
   },
   contenedorTextoLargo: {
     flex: 1, // 🚀 OBLIGATORIO: Evita que si la dirección o nota son muy largas, se salgan de la tarjeta
-  },
-
-  // Para las llamadas telefonicas.
-  btnLinkLlamada: {
-    paddingVertical: 2,
-    paddingHorizontal: 6,
-    borderRadius: 4,
-  },
-  textoTelefonoInteractivo: {
-    fontSize: 15,
-    color: "#1e40af", // Azul elegante que denota que es un enlace interactivo
-    textDecorationLine: "underline", // Raya abajo clásica para dar pista de interacción
-    fontWeight: "500",
-  },
-  // Mantiene tus fuentes y colores, pero le da el comportamiento visual de un enlace
-  textoDireccionLink: {
-    color: "#0f766e", // Un tono verde azulado/teal elegante muy usado para mapas/geolocalización
-    textDecorationLine: "underline", // Línea inferior para dar la pista de que es clickeable
   },
 });

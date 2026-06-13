@@ -188,10 +188,17 @@ export default function App_V05() {
           activeOpacity={0.8}
           onPress={() => contactarme()} // <-- El "huevo de pascua"
         >
-          <View style={styles.recuadroTituloModerno}>
+          {/* <View style={styles.recuadroTituloModerno}> */}
+          <LinearGradient
+            colors={["#1e3a8a", "#3b82f6"]} // Azul profundo a azul electrico
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }} // Gradiente horizontal elegante
+            style={styles.recuadroTituloModerno}
+          >
             <Text style={styles.emojisTitulo}>📇</Text>
             <Text style={styles.textoTituloPrincipal}>Contactos</Text>
-          </View>
+          </LinearGradient>
+          {/* </View> */}
         </TouchableOpacity>
       </View>
       {/** contenedorHeaderPrincipal */}
@@ -256,37 +263,36 @@ export default function App_V05() {
 const styles = StyleSheet.create({
   contenedorHeaderPrincipal: {
     width: "100%",
-    paddingHorizontal: 3,
-    marginTop: 12,
-    marginBottom: 8,
+    paddingHorizontal: 16,
+    marginTop: 20, // Un poco mas de separacion de la barra de estado
+    marginBottom: 12,
     // alignItems: "center", // Centra el recuadro en la pantalla
   },
   recuadroTituloModerno: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#ffffff",
-    paddingVertical: 12,
+    paddingVertical: 14, // Mas cuerpo vertical para que respire el texto
+    borderRadius: 14, // Bordes bien redondeados y modernos
 
-    borderRadius: 12, // Bordes bien redondeados y modernos
-    borderWidth: 1,
-    borderColor: "#e2e8f0", // Borde gris muy suave
     // 🌤️ Sombra sutil para darle profundidad (Efecto flotante)
-    shadowColor: "#0f172a",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-    elevation: 2, // Sombra para Android (tu Samsung)
+
+    shadowColor: "#3b82f6", // Sombra con tono azul vivo
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 6, // Sombra para Android (tu Samsung)
   },
   emojisTitulo: {
-    fontSize: 22,
-    marginRight: 10,
+    fontSize: 24,
+    marginRight: 12,
   },
   textoTituloPrincipal: {
     fontSize: 22,
-    fontWeight: "800", // Letra imponente y gruesa
-    color: "#1e3a8a", // El azul corporativo elegante que ya usas
-    letterSpacing: 0.5, // Un pequeño espacio entre letras premium
+    fontWeight: "900", // Letra imponente y gruesa
+    color: "#ffffff", // El azul corporativo elegante que ya usas
+    letterSpacing: 1.2, // Un pequeño espacio entre letras premium
+    textTransform: "uppercase",
   },
 
   contenedorVacio: {
