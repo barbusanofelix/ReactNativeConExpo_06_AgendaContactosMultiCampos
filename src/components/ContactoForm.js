@@ -198,19 +198,21 @@ export default function ContactoForm({
           <Text style={styles.subtituloForm}>
             {contactoAEditar ? "📝 Editar Contacto" : "👤 Nuevo Contacto"}
           </Text>
-          <TouchableOpacity onPress={presionarGuardar}>
-            <Image
-              source={require("../../assets/guardar.png")}
-              style={styles.btnGuardar}
-            />
-          </TouchableOpacity>
+          <View style={styles.contenedorGuardarSalir}>
+            <TouchableOpacity onPress={presionarGuardar}>
+              <Image
+                source={require("../../assets/guardar.png")}
+                style={styles.btnGuardar}
+              />
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={cancelarMostrarFormYEdicion}
-            style={styles.btnCerrarSuperior}
-          >
-            <Text>❌</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={cancelarMostrarFormYEdicion}
+              style={styles.btnCerrarSuperior}
+            >
+              <Text>❌</Text>
+            </TouchableOpacity>
+          </View>
         </View>
         {/* Input de Nombre */}
         <TextInput
@@ -415,7 +417,7 @@ export default function ContactoForm({
         )}
 
         {/* Botonera de guardar y cancelar */}
-        <View style={styles.botonera}>
+        {/* <View style={styles.botonera}>
           <TouchableOpacity
             onPress={presionarGuardar}
             style={styles.btnGuardar}
@@ -433,7 +435,7 @@ export default function ContactoForm({
               </Text>
             </TouchableOpacity>
           )}
-        </View>
+        </View> */}
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -444,14 +446,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
+  contenedorGuardarSalir: {
+    flexDirection: "row",
+    gap: 8,
+
+    // alignSelf:'auto',
+    alignItems: "center",
+  },
   btnCerrarSuperior: {
-    color: "#f40505",
+    // color: "#d8d2d2",
     padding: 8,
     backgroundColor: "#FEF2F2",
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#FEE2E2",
-    marginBottom: 5,
+    borderColor: "#edcaca",
+    marginBottom: 4,
+    marginTop: 3,
   },
 
   formularioCard: {
@@ -466,8 +476,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: colores.primario,
+    alignSelf: "auto",
     marginBottom: 0,
-    marginTop: 5,
+    marginTop: 9,
   },
   seccionTitulo: {
     fontSize: 14,
@@ -523,7 +534,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FEF2F2",
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#FEE2E2",
+    borderColor: "#edcaca",
   },
   btnAñadirFila: {
     alignSelf: "flex-start",
@@ -544,9 +555,11 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   btnGuardar: {
-    width: 30,
+    paddingTop: 2,
+    width: 35,
     height: 35,
     resizeMode: "contain",
+    alignSelf: "auto",
     // flex: 1,
     // backgroundColor: colores.secundario,
     padding: 12,

@@ -1,7 +1,7 @@
 // Esta en realidad es la Version 01
 // src/components/ContactoCard.js
 import React, { useState } from "react"; // ◄--- Importamos useState para el acordeón
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { colores } from "../styles/globalStyles";
 import {
   iniciarLlamada,
@@ -14,6 +14,7 @@ export default function ContactoCard({
   contacto,
   eliminarContactoGlobal,
   editarContactoSeleccionado,
+  compartirContactoIndividual, // <--- Asegúrate de recibirla aquí
 }) {
   // 🔑 ESTADO LOCAL: Controla si esta tarjeta específica está abierta o cerrada
   const [expandido, setExpandido] = useState(false);
@@ -181,6 +182,40 @@ export default function ContactoCard({
             )}
           </View>
         )}
+        {/* 🔗 BOTÓN DE COMPARTIR INDIVIDUAL (Abajo a la derecha) */}
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            paddingHorizontal: 15,
+            paddingBottom: 10,
+            marginTop: 5,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => compartirContactoIndividual(contacto)} // <--- Llama a la nueva función
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              // backgroundColor: "#bcdbf9", // Un fondo gris muy suave y limpio
+              backgroundColor: "#e1e7fc",
+              paddingVertical: 5,
+              paddingHorizontal: 10,
+              borderRadius: 6,
+              borderWidth: 1,
+              borderColor: "#e9ecef",
+            }}
+          >
+            {/* <Text style={{ fontSize: 14, marginRight: 5 }}>🔗</Text>
+            <Text style={{ fontSize: 12, color: "#6c757d", fontWeight: "600" }}>
+              Compartir
+            </Text> */}
+            <Image
+              source={require("../../assets/compartir.png")}
+              style={styles.iconoCompartir}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -279,6 +314,11 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     borderTopWidth: 1,
     borderTopColor: "#f1f5f9", // Una línea divisoria muy sutil entre datos
+  },
+  iconoCompartir: {
+    height: 15,
+    width: 15,
+    tintColor: "#2d08f9",
   },
   iconoExtra: {
     fontSize: 18,

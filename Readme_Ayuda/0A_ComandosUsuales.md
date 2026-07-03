@@ -85,3 +85,16 @@ npx expo install @react-native-async-storage/async-storage
 ```
 
 ---
+
+# COMANDO DE LIMPIEZA DE CACHE DE EXPO
+
+Se usa para limpiar el cache de expo.
+Por ejemplo , cuando cambiamos el json.
+
+---
+
+```BASH
+npx expo start -c
+```
+
+---

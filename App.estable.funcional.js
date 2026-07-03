@@ -1,4 +1,5 @@
-// App_V07.js
+// Esta es la version App.js que era la version estable App_V07.js 
+// Ahora lo colocamos App.estable.funcional.js para regresaro a App.js, si falla la exportacion e importacion de contactos.
 // Esta version de ordenado y filtrado es muy eficiente porque ordenamos y filtramos solo en memoria. No se guarda a menos que se edite o borre.
 // Añadir mas campos a la Base de datos: Empresa, correo, nota
 import React, { useState, useEffect } from "react";
@@ -11,22 +12,25 @@ import {
   TouchableOpacity,
   TextInput,
   Image, // Para udar imagenes
+  // Para mostrar la ayuda
 } from "react-native";
-import { globalStyles, colores } from "../styles/globalStyles";
-import ContactoCard from "../components/ContactoCard";
-import ContactoForm from "../components/ContactoForm";
-import BotonNuevoContacto from "../components/BotonNuevoContacto";
+import { Modal, ScrollView } from "react-native";
+import { globalStyles, colores } from "./src/styles/globalStyles";     
+import ContactoCard from "./src/components/ContactoCard";                 
+import ContactoForm from "./src/components/ContactoForm";
+// import BotonNuevoContacto from "../components/BotonNuevoContacto";
 import { StatusBar } from "expo-status-bar";
 import AsyncStorage from "@react-native-async-storage/async-storage"; // ◄--- Importamos el disco
-import { iniciarCorreo } from "../utils/linkingHelper"; // Importamos la funcion de iniciar el mailfrom
+import { iniciarCorreo } from "./src/utils/linkingHelper"; // Importamos la funcion de iniciar el mailfrom
 
 import { LinearGradient } from "expo-linear-gradient";
-import CabeceraGradient from "../components/CabeceraGradient"; // Para probar el componente
+// import CabeceraGradient from "../components/CabeceraGradient"; // Para probar el componente
 
 // Icono Agregar by Graphicsbay on <a href="https://icon-icons.com/es/authors/374-graphicsbay">Icon-Icons.com</a>
 // Icono Doble by khulqi Rosyid on <a href="https://icon-icons.com/es/authors/1410-khulqi-rosyid">Icon-Icons.com</a>
+//Icono Estado de metro pregunta ayuda by chrisbanks2 on <a href="https://icon-icons.com/es/authors/29-chrisbanks2">Icon-Icons.com</a>
 
-export default function App_V06() {
+export default function App_V07() {
   // 1. NUEVO MODELO DE DATOS: Array de objetos con sub-arrays de teléfonos
   const [listaContactos, setListaContactos] = useState([]);
 
@@ -39,6 +43,9 @@ export default function App_V06() {
 
   // Para orden de ordenacion
   const [direccionOrden, setDireccionOrden] = useState("ninguno");
+
+  // Mostrar ayuda con un Modal al hacer clip en ? del titulo principal
+  const [mostrarAyuda, setMostrarAyuda] = useState("false");
 
   // 🔑 Clave única para identificar los datos de nuestra agenda en el disco del móvil
   const STORAGE_KEY = "@agenda_multicampos_v03";
@@ -209,6 +216,7 @@ export default function App_V06() {
     guardarContactosEnDisco();
   }, [listaContactos]); // Se dispara mágicamente CADA VEZ que 'listaContactos' mute (crear, editar o borrar)
 
+  // ***********************************     RENDERIZADO     ****************************************************
   return (
     <View style={globalStyles.container}>
       {/* 🌟 El título se queda fijo arriba siempre */}
@@ -220,15 +228,17 @@ export default function App_V06() {
         >
           <TouchableOpacity onPress={cambioDireccionOrden}>
             <Image
-              source={require("../../assets/ordenar.png")}
+              source={require("./assets/ordenar.png")}
               style={styles.flechaOrdenar}
             />
           </TouchableOpacity>
           <Text style={styles.textoTituloPrincipal}>Contactos</Text>
-          <Image
-            source={require("../../assets/address-book.png")}
-            style={styles.iconoPngTitulo}
-          />
+          <TouchableOpacity onPress={() => setMostrarAyuda(true)}>
+            <Image
+              source={require("./assets/ayuda.png")}
+              style={styles.iconoPngTitulo}
+            />
+          </TouchableOpacity>
 
           {/* <Text style={styles.emojisTitulo}>📇</Text> */}
 
@@ -237,7 +247,7 @@ export default function App_V06() {
             style={styles.btnAyudaFlotante}
           >
             <Image
-              source={require("../../assets/contacto.png")}
+              source={require("./assets/contacto.png")}
               style={styles.iconoPngAyuda}
             />
           </TouchableOpacity>
@@ -262,7 +272,7 @@ export default function App_V06() {
               onPress={crearContacto} // >arriba definido como funcion flecha.
             >
               <Image
-                source={require("../../assets/agrerarContacto.png")}
+                source={require("./assets/agrerarContacto.png")}
                 style={styles.agregarContacto}
               />
               {/* <Text style={styles.textoBtnAñadir}>+</Text> */}
@@ -302,10 +312,103 @@ export default function App_V06() {
           cancelarMostrarFormYEdicion={cancelarMostrarFormYEdicion} // Cancela Mostrar Formulario y le edicion de contacto
         />
       )}
+      {/* 🙋‍♂️ VENTANA EMERGENTE DE AYUDA */}
+      <Modal
+        animationType="slide" // Hace que la pantalla suba elegantemente desde abajo
+        transparent={true} // Permite que el fondo de la app se intuya detrás con opacidad
+        visible={mostrarAyuda}
+        onRequestClose={() => setMostrarAyuda(false)} // Controla el botón "atrás" físico de Android
+      >
+        <View style={styles.contenedorCentradoModal}>
+          <View style={styles.tarjetaAyuda}>
+            {/* Cabecera de la ventana de ayuda */}
+            <View style={styles.cabeceraModal}>
+              <TouchableOpacity onPress={() => setMostrarAyuda(false)}>
+                <View style={styles.subCabecera}>
+                  <Text style={styles.tituloModal}>❓ Guía de Uso Rápido</Text>
+                  <Text style={styles.botonCerrarModal}>❌</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            {/* Cuerpo de la ayuda con Scroll por si el texto crece */}
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Text style={styles.subtituloAyuda}>
+                🔤 Ordenación de Contactos
+              </Text>
+              <Text style={styles.textoAyuda}>
+                Toca las flechas (↕) en la cabecera para alternar el orden, por
+                nombre, de tus contactos de la A-Z o de la Z-A.
+              </Text>
+              <Text style={styles.subtituloAyuda}>🔍 Búsqueda Inteligente</Text>
+              <Text style={styles.textoAyuda}>
+                Escribe en la barra superior. El filtro buscará simultáneamente
+                por Nombre, Teléfono o las Notas que hayas guardado.
+              </Text>
+              <Text style={styles.subtituloAyuda}>
+                👨‍💻 Gestión de edición, borrar o crear.
+              </Text>
+              <Text style={styles.textoAyuda}>
+                Usa el ✏️ para editar los datos de un contacto o la ❌ para
+                eliminarlo, o cerrar una ventana. Con el ➕ agrega un nuevo
+                contacto.
+              </Text>
+              <Text style={styles.subtituloAyuda}>
+                🔓 Expansión de un Contacto
+              </Text>
+              <Text style={styles.textoAyuda}>
+                Haz clic en área vacía de la tarjeta de un contacto, para
+                expandirla o contraerla y ver toda la info del contacto.
+              </Text>
+              <Text style={styles.subtituloAyuda}>📞 Llamadas Directas</Text>
+              <Text style={styles.textoAyuda}>
+                Toca directamente el número de teléfono subrayado para iniciar
+                llamada. Al crear, incluye el código de área, antes del nùmero,
+                ej: +34
+              </Text>
+
+              <Text style={styles.subtituloAyuda}>📞 Multi-teléfonos</Text>
+              <Text style={styles.textoAyuda}>
+                Puedes añadir los teléfonos que necesites por contacto. Tocando
+                la etiqueta del tipo de teléfono (Móvil, Casa, Trabajo, Otros...
+                se repiten) estas cambiaran para que asignes la más conveniente.
+              </Text>
+
+              <Text style={styles.subtituloAyuda}>📧 Correo Directo</Text>
+              <Text style={styles.textoAyuda}>
+                Clic sobre la dirección del email guardado, para abrir la
+                aplicación de correo con ese destinatario.
+              </Text>
+              <Text style={styles.subtituloAyuda}>📍Dirección en Maps</Text>
+              <Text style={styles.textoAyuda}>
+                Si colocas una dirección que Maps reconozca, te la mostrará en
+                el mapa, al hacer clic en ella.
+              </Text>
+
+              <Text style={styles.subtituloAyuda}>🗒️ Nota por contacto</Text>
+              <Text style={styles.textoAyuda}>
+                En cada contacto puedes agregar, si lo deseas, una nota o
+                detalle que consideres.
+              </Text>
+
+              <Text style={styles.subtituloAyuda}>🔘 Campos opcionales</Text>
+              <Text style={styles.textoAyuda}>
+                El nombre y un telefono son obligatorios. Resto son opcionales.
+              </Text>
+
+              <Text style={styles.versionApp}>
+                Versión 1.0.0 • Desarrollada por Félix C. López B.
+              </Text>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
       <StatusBar style="auto" />
     </View>
   );
 }
+
+// ***********************************    FIN  RENDERIZADO     ****************************************************
 
 const styles = StyleSheet.create({
   contenedorHeaderPrincipal: {
@@ -435,6 +538,70 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginLeft: 10,
     marginRight: 10,
+  },
+  contenedorCentradoModal: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo oscuro semitransparente que resalta el modal
+    padding: 3,
+  },
+  tarjetaAyuda: {
+    backgroundColor: "#ffffff",
+    borderRadius: 16,
+    padding: 20,
+    width: "90%",
+    maxHeight: "80%", // Evita que se coma toda la pantalla en dispositivos pequeños
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5, // Sombra para Android
+  },
+  // cabeceraModal: {
+  //   // flexDirection: "row",
+  //   justifyContent: "space-between",
+  //   alignItems: "center",
+  //   borderBottomWidth: 1,
+  //   borderBottomColor: "#e2e8f0",
+  //   paddingBottom: 12,
+  //   marginBottom: 15,
+  // },
+  subCabecera: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e2e8f0",
+    paddingBottom: 10,
+  },
+  tituloModal: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#1e3a8a",
+  },
+  botonCerrarModal: {
+    fontSize: 18,
+    padding: 4,
+  },
+  subtituloAyuda: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#1e40af",
+    marginTop: 12,
+    marginBottom: 4,
+  },
+  textoAyuda: {
+    fontSize: 13,
+    color: "#475569",
+    lineHeight: 18,
+    marginBottom: 8,
+  },
+  versionApp: {
+    fontSize: 11,
+    color: "#94a3b8",
+    textAlign: "center",
+    marginTop: 25,
+    fontStyle: "italic",
   },
 });
 
