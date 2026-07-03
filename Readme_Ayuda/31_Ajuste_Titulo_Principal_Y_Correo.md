@@ -157,6 +157,8 @@ Antes de importar Linear Gradiente hay que instalar el modulo:
 npx expo install expo-linear-gradient
 ```
 ---
+### 💡 ¿Por qué npx expo install y no npm install? > 
+Porque el comando de Expo revisa la versión exacta de tu SDK y descarga la versión de expo-linear-gradient que no va a romper nada en tu móvil Samsung.
 
 
 ---

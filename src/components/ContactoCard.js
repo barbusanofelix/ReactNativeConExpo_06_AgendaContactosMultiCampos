@@ -3,7 +3,12 @@
 import React, { useState } from "react"; // ◄--- Importamos useState para el acordeón
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { colores } from "../styles/globalStyles";
-import { iniciarLlamada, abrirEnMaps } from "../utils/linkingHelper"; // Importamos los modulos para llamar y ubicacion en maps
+import {
+  iniciarLlamada,
+  abrirEnMaps,
+  iniciarCorreo,
+} from "../utils/linkingHelper"; // Importamos los modulos para llamar y ubicacion en maps
+// Icono Contacto dirección sobres carta by Elastic1 studio on <a href="https://icon-icons.com/es/authors/1459-elastic1-studio">Icon-Icons.com</a>
 
 export default function ContactoCard({
   contacto,
@@ -121,7 +126,19 @@ export default function ContactoCard({
                 <Text style={styles.iconoExtra}>✉️</Text>
                 <View>
                   <Text style={styles.labelExtra}>Correo Electrónico</Text>
-                  <Text style={styles.textoExtra}>{contacto.correo}</Text>
+                  <TouchableOpacity
+                    onPress={(e) => {
+                      e.stopPropagation(); // 🛑 Evita que la tarjeta se colapse
+                      iniciarCorreo(contacto.correo, "En el Texto");
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Text
+                      style={[styles.textoExtra, styles.textoDireccionLink]}
+                    >
+                      {contacto.correo}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </View>
             )}
@@ -173,8 +190,8 @@ const styles = StyleSheet.create({
   tarjeta: {
     backgroundColor: "#fff",
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+    padding: 5,
+    marginBottom: 6,
     // Sombra suave para Android
     elevation: 3,
     // Línea decorativa lateral izquierda (fiel a tu diseño original)
@@ -213,7 +230,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colores.textoMutado,
     fontStyle: "italic",
-    marginLeft: "auto", // Lo empuja al extremo derecho de la tarjeta
+    // marginLeft: "auto", // Lo empuja al extremo derecho de la tarjeta
+    marginLeft: 4, // Un pequeño espacio de cortesía al lado del número subrayado
+    alignSelf: "center", // Lo alinea verticalmente de forma perfecta con el texto vecino
   },
   // Estilos Vista Expandida
   contenedorExpandido: {

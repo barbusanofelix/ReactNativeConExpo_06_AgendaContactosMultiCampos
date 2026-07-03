@@ -10,8 +10,13 @@ import {
   ScrollView, // 📜 ¡Nuevo!
   KeyboardAvoidingView, // ⌨️ ¡Nuevo!
   Platform, // 📱 ¡Nuevo! para detectar si es Android
+  Image,
 } from "react-native";
 import { colores } from "../styles/globalStyles";
+
+//Icono Salvar archivo disquete abierto by Custom Icon Design on <a href="https://icon-icons.com/es/authors/9-custom-icon-design">Icon-Icons.com</a>
+// Icono Guardar by Custom Icon Design on <a href="https://icon-icons.com/es/authors/9-custom-icon-design">Icon-Icons.com</a>
+//Icono Guardar by Custom Icon Design on <a href="https://icon-icons.com/es/authors/9-custom-icon-design">Icon-Icons.com</a>
 
 export default function ContactoForm({
   guardarContactoGlobal,
@@ -193,6 +198,13 @@ export default function ContactoForm({
           <Text style={styles.subtituloForm}>
             {contactoAEditar ? "📝 Editar Contacto" : "👤 Nuevo Contacto"}
           </Text>
+          <TouchableOpacity onPress={presionarGuardar}>
+            <Image
+              source={require("../../assets/guardar.png")}
+              style={styles.btnGuardar}
+            />
+          </TouchableOpacity>
+
           <TouchableOpacity
             onPress={cancelarMostrarFormYEdicion}
             style={styles.btnCerrarSuperior}
@@ -408,6 +420,7 @@ export default function ContactoForm({
             onPress={presionarGuardar}
             style={styles.btnGuardar}
           >
+            <Image source={require("../../assets/guardar.png")} />
             <Text style={styles.btnTexto}>Guardar</Text>
           </TouchableOpacity>
           {contactoAEditar && (
@@ -531,10 +544,13 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   btnGuardar: {
-    flex: 1,
-    backgroundColor: colores.secundario,
+    width: 30,
+    height: 35,
+    resizeMode: "contain",
+    // flex: 1,
+    // backgroundColor: colores.secundario,
     padding: 12,
-    borderRadius: 8,
+    // borderRadius: 8,
     alignItems: "center",
   },
   btnCancelar: {

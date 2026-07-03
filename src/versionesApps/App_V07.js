@@ -1,5 +1,5 @@
-// App_V06.js
-// Aqui la version de ordenado y filtrado es ineficiente porque ordenamos y guardamos en el disco, por cada ordenacion
+// App_V07.js
+// Esta version de ordenado y filtrado es muy eficiente porque ordenamos y filtramos solo en memoria. No se guarda a menos que se edite o borre.
 // Añadir mas campos a la Base de datos: Empresa, correo, nota
 import React, { useState, useEffect } from "react";
 import {
@@ -134,20 +134,23 @@ export default function App_V06() {
     return coincideNombre || coincideTelefono || coincideNota;
   });
 
+  // Aqui comamos los contactos filtrados y los ordenamos
+  const contactosOrdenadosYFiltrados = [...contactosFiltrados].sort((a, b) => {
+    if (direccionOrden === "asc") {
+      return a.nombre.localeCompare(b.nombre); // Devuelve <0 a va antes de b
+    } else if (direccionOrden === "desc") {
+      return b.nombre.localeCompare(a.nombre);
+    } // devuelve >0 va despues de b
+    return 0;
+  });
+
+  // Solo Cambiamos la direccion de ordenacion.
   const cambioDireccionOrden = () => {
-    // Creamos una copia de la lista filtra de contactos ( si no se filtro es toda)
-
-    const copiaListaContactos = [...listaContactos]; // OJO: Copiamos toda la lista
-
     //Establecemos el orden en creciente. asc: ascendente, desc: decreciente
+    // Cuando iniciamos sin datos la direccion sera 'ninguno'
     if (direccionOrden === "ninguno" || direccionOrden === "desc") {
-      copiaListaContactos.sort((a, b) => a.nombre.localeCompare(b.nombre));
-
-      setListaContactos(copiaListaContactos);
       setDireccionOrden("asc");
     } else {
-      copiaContactosFiltrados.sort((a, b) => b.nombre.localeCompare(a.nombre));
-      setListaContactos(copiaListaContactos);
       setDireccionOrden("desc");
     }
   };
@@ -217,13 +220,13 @@ export default function App_V06() {
         >
           <TouchableOpacity onPress={cambioDireccionOrden}>
             <Image
-              source={require("../assets/ordenar.png")}
+              source={require("../../assets/ordenar.png")}
               style={styles.flechaOrdenar}
             />
           </TouchableOpacity>
           <Text style={styles.textoTituloPrincipal}>Contactos</Text>
           <Image
-            source={require("../assets/address-book.png")}
+            source={require("../../assets/address-book.png")}
             style={styles.iconoPngTitulo}
           />
 
@@ -234,7 +237,7 @@ export default function App_V06() {
             style={styles.btnAyudaFlotante}
           >
             <Image
-              source={require("../assets/contacto.png")}
+              source={require("../../assets/contacto.png")}
               style={styles.iconoPngAyuda}
             />
           </TouchableOpacity>
@@ -249,7 +252,7 @@ export default function App_V06() {
           <View style={styles.contenedorCabeceraAcciones}>
             <TextInput
               style={styles.inputBusqueda}
-              placeholder="Buscar por nombre o telefono..."
+              placeholder="🔍Buscar por nombre o teléfono o Nota."
               value={filtroBusqueda}
               onChangeText={setFiltroBusqueda}
             />
@@ -259,7 +262,7 @@ export default function App_V06() {
               onPress={crearContacto} // >arriba definido como funcion flecha.
             >
               <Image
-                source={require("../assets/agrerarContacto.png")}
+                source={require("../../assets/agrerarContacto.png")}
                 style={styles.agregarContacto}
               />
               {/* <Text style={styles.textoBtnAñadir}>+</Text> */}
@@ -268,7 +271,7 @@ export default function App_V06() {
 
           {/* 📜 LISTA DE CONTACTOS */}
           <FlatList
-            data={contactosFiltrados}
+            data={contactosOrdenadosYFiltrados}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <ContactoCard
@@ -387,10 +390,11 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "#fff",
     borderRadius: 8,
-    paddingHorizontal: 5,
+    paddingLeft: 3,
+    paddingRight: 5,
     justifyContent: "center",
     alignItems: "center",
-    fontSize: 15,
+    fontSize: 14,
 
     marginRight: 5,
     elevation: 3,
